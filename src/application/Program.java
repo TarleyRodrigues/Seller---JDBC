@@ -1,35 +1,32 @@
 package application;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import db.DB;
-import db.DbIntegrityException;
 
 public class Program {
 
 	public static void main(String[] args) {
 		
 		Connection conn = null;
-		PreparedStatement st = null;
+		Statement st = null;
 		try {
 			conn = DB.getConnection();
 			
-			st = conn.prepareStatement(
-					"DELETE FROM department "
-					+ "WHERE "
-					+ "iD = ?"
-					);
+			st = conn.createStatement();
 			
-			st.setInt(1, 2);
-			
-			int rowsAffected = st.executeUpdate();
-			
-			System.out.println("Done! Rows affected: "+ rowsAffected);
-			
+			//saber o número de linhas afetadas
+			//Todo vendedor que pertencer ao Department 1, o salário será atualizado para 2090:
+			int rows1 = st.executeUpdate("UPDATE seller SET BaseSalary = 2090 WHERE DepartmentId = 1");
+			//Todo vendedor que pertencer ao Department 2, o salário será atualizado para 3090:
+			int rows2 = st.executeUpdate("UPDATE seller SET BaseSalary = 3090 WHERE DepartmentId = 2");
+
+			System.out.println("rows1 " + rows1);
+			System.out.println("rows2 " + rows2);
 		}catch(SQLException e) {
-			throw new DbIntegrityException(e.getMessage());
+			e.printStackTrace();
 		}
 		finally {
 			DB.closeStatement(st);
