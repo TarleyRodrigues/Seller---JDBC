@@ -21,17 +21,24 @@ public class Program {
 		//inserindo vendedor no Banco de dados: 
 		try {
 			conn = DB.getConnection();
+			
 			st = conn.prepareStatement(
 					"INSERT INTO seller "
 					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
 					+ "VALUES "
 					+ "(?, ?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);//mostrar a chave que foi gerada
-			st.setString(1, "Carl Purple");
-			st.setString(2, "carl@gmail.com");
+			st.setString(1, "Tarley Rodrigues");
+			st.setString(2, "tarley@gmail.com");
 			st.setDate(3, new java.sql.Date(sdf.parse("22/04/1985").getTime()));
-			st.setDouble(4, 3000.00);
-			st.setInt(5, 4);
+			st.setDouble(4, 1250.00);
+			st.setInt(5, 6);
+			DB.closeStatement(st);
+			
+			st = conn.prepareStatement(
+					"insert into department (Name) values ('Management'),('Sale')",
+					Statement.RETURN_GENERATED_KEYS
+					);
 			
 			int rowsAffected = st.executeUpdate();
 			
