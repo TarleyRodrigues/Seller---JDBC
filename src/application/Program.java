@@ -1,9 +1,10 @@
 package application;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import db.DB;
 
@@ -11,28 +12,31 @@ public class Program {
 
 	public static void main(String[] args) {
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Connection conn = null;
-		//statement é o comando SQL
-		Statement st = null;
-		//resultSet para receber os resultados das consultas SQL
-		ResultSet rs = null;
+		PreparedStatement st = null;
+		
+		//inserindo vendedor no Banco de dados: 
 		try {
 			conn = DB.getConnection();
+			st = conn.prepareStatement(
+					"INSERT INTO seller "
+					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?)");
+			st.setString(1, "Carl Purple");
+			st.setString(2, "carl@gmail.com");
+			st.setDate(3, new java.sql.Date(sdf.parse("22/04/1985").getTime()));
+			st.setDouble(4, 3000.00);
+			st.setInt(5, 4);
 			
-			st = conn.createStatement();
-			
-			//executeQuery espera que entre com uma Strind(comando Sql)
-			rs = st.executeQuery("select * from department");
-		
-			while(rs.next()) {
-				System.out.println(rs.getInt("Id") + ", " + rs.getString("Name"));
-			}
+			int rowsAffected = st.executeUpdate();
+			System.out.println("Done! Rows affected: " + rowsAffected);
 		}
-		catch(SQLException e) {
+		catch(SQLException | ParseException e) {
 			e.printStackTrace();
 		}
 		finally {
-			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 			DB.closeConnection();
 		}
