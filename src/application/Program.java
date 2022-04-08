@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import db.DB;
+import db.DbIntegrityException;
 
 public class Program {
 
@@ -16,20 +17,19 @@ public class Program {
 			conn = DB.getConnection();
 			
 			st = conn.prepareStatement(
-					"UPDATE seller "
-					+ "SET BaseSalary = BaseSalary + ? "
-					+ "WHERE " //smp adc uma restrição para não atualizar todos elementos
-					+ "(DepartmentId = ?)" //somente desse departamento
+					"DELETE FROM department "
+					+ "WHERE "
+					+ "iD = ?"
 					);
-			st.setDouble(1, 200.00);
-			st.setInt(2, 2);
+			
+			st.setInt(1, 2);
 			
 			int rowsAffected = st.executeUpdate();
 			
 			System.out.println("Done! Rows affected: "+ rowsAffected);
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
+			throw new DbIntegrityException(e.getMessage());
 		}
 		finally {
 			DB.closeStatement(st);
